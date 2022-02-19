@@ -8,9 +8,9 @@ The main differences are:
   * different LDO (TLV76733DRVR)
   * removed the flash button (not needed when using JTAG)
   * modified some footprints:
-	** all necessary resistors and capacitors have 0805 footprints, which also allows to use 0603 parts
-	** deleted the antenna from the module footprint since that interferes with panelizing 
-	** stretched pads of the WS2812 footprint to aid hand soldering
+	* all necessary resistors and capacitors have 0805 footprints, which also allows to use 0603 parts
+	* deleted the antenna from the module footprint since that interferes with panelizing 
+	* stretched pads of the WS2812 footprint to aid hand soldering
 
 Options:
   * added optional 22pF capacitors to D+ and D- lines on the bottom. They appear on the schematics of the official dev board, but seem not to be necessary.
