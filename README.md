@@ -1,56 +1,23 @@
-# E-Tinkers ESP32-C3 Board
+# USB_JTAG mod of E-Tinkers ESP32-C3 Board
 
-E-Tinkers ESP32-C3 Board is a ESP32-C3 dev board base on ESP32-C3-WROOM-02 module from  Expressif, unlike the official ESP-C3-DevKitM-1 or ESP32-C3-DevKitC-02, E-Tinkers ESP32-C3 Board does not has the USB Type-C port and the ESPLink on-board programmer, but it does include an on-board 600mA LDO and break out all the GPIO pins. It is designed for using as a WiFi/BLE shield or to integrated with another MCU and/or sensors, and before creating your own customizing design, you need an ESP32-C3 evaluation board for rapid prototype, in both cases USB port is probably not needed in the end product.
+The ESP32-C3 chip has a USB to JTAG bridge built in, but no dev board directly makes use of it. So I modified
+![ Henry Cheung's breakout board](https://github.com/e-tinkers/e-tinkers-esp32-c3-board/)
 
-## Specification and Key features
+The main differences are:
+  * micro USB connector with ESD protection (CM1231)
+  * different LDO (TLV76733DRVR)
+  * removed the flash button (not needed when using JTAG)
+  * modified some footprints:
+	** all necessary resistors and capacitors have 0805 footprints, which also allows to use 0603 parts
+	** deleted the antenna from the module footprint since that interferes with panelizing 
+	** stretched pads of the WS2812 footprint to aid hand soldering
 
-Component|Detail |
-----|----|
-MCU         | 32-bit single-core RISC-V |
-ROM         | 384KB |
-SRAM        | 400KB(16KB for cache) |
-Flash       | 4MB |
-WiFi        | IEEE 802.11bgn |
-Bluetooth   | BLE 5.0 & mesh |
-GPIO        | 22 |
-SPI         | 3 |
-UART        | 2 |
-I2C         | 1 |
-RMT         | 2 Transmit + 2 Receive |
-DMA         | 3 Transmit + 3 Receive |
-LED-PWMC    | 6 channels |
-TWAI        | 1 |
-ADC         | 2 x 12bit, 6 channels |
-Temp sensor | 1 |
-Timer       | 6 |
-Security    | OTP/AES/SHA/RSA/RNG/HMAC |
+Options:
+  * added optional 22pF capacitors to D+ and D- lines on the bottom. They appear on the schematics of the official dev board, but seem not to be necessary.
+  * populating R4 with a 0 ohm resistor will connect USB shield with GND. Usually shield is connected to GND at the host and not at devices downstream. Therefore R4 should be left unpopulated in most applications. 
+  * the LDO can be disabled by connecting LDO_EN to GND to save energy when not used.
 
-## Pin Assignements
-All available GPIO pins of the ESP32-C3-WROOM-02 are broken out to the pin headers on the board.
-![E-Tinkers ESP32-C3 Board pinout](https://github.com/e-tinkers/e-tinkers-esp32-c3-board/blob/master/e-tinkers_esp32_c3_pinout.png)
-
-## Firmware
-Programming can be done using a USB-TTL Adaptor. The *Firmware* folder contains the firmware binary code , bootloader, and partition table for testing and demo purpose. Use [esptool](https://github.com/espressif/esptool) to upload the code to the board.
-
-```
-esptool.py --chip esp32c3 \
-	--port /dev/cu.SLAB_USBtoUART \
-	write_flash \
-	--flash_mode dio \
-	--flash_size 4MB \
-	--flash_freq 80m \
-	0x0 bootloader.bin \
-	0x8000 partitions.bin \
-	0x10000 firmware.bin
-```
-
-## Source Code
-The source code for the firmware used can be found at this [repository](https://github.com/e-tinkers/esp32-c3-blinking).
-
-## Reference
-### esp-idf
-https://github.com/espressif/esp-idf
-### esp32-c3 get-started
-https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/
-### esp32-c3
-https://www.espressif.com/en/products/socs/esp32-c3
+Please note that since I made some minor modifications after receiving
+the first patch of PCBs, I have not yet used the gerbers in the
+archive to fabricate actual boards. Therefore there is a small chance
+that those contain errors.
